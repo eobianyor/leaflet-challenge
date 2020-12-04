@@ -31,86 +31,61 @@ var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.
 // -------------------------------------------------------------------------------------------------------------------
 // Define arrays to hold created earthquake markers and plate boundary polyline
 var eqMarkers = [];
-var plateBoundary = [];
+var polyLineBoundary = [];
 
 // // Perform a GET request to the query URL
-d3.json(link, function (data) {
+d3.json("static/data/PB2002_boundaries.json", function (data) {
+  console.log()
+  // d3.json(link, function (data) {
   // Once we get a response, create a geoJSON layer containing the features array and add a popup for each marker
   // then, send the layer to the createMap() function.
-  var earthquakes = L.geoJSON(data.features, {
-    onEachFeature: makeCircles
+  var plateBoundary = L.geoJSON(data.features, {
+    drawPlateLines
   });
 
-  d3.json("static/data/PB2002_boundaries.json", function (plateData) {
-    // Once we get a response, create a geoJSON layer containing the features array and add a popup for each marker
-    // then, send the layer to the createMap() function.
-    // var plateLines = [features.geometry.coordinates[1], features.geometry.coordinates[0]];
-    // console.log(plateLines)
-    makePolyLine()
-  });
-
-  makePolyLine()
-  createMap(earthquakes);
+  createMap(plateBoundary);
 });
 // -------------------------------------------------------------------------------------------------------------------
 // FUNCTION FOR creating THE EARTHQUAKE CIRCLES
 // -------------------------------------------------------------------------------------------------------------------
-function makeCircles(feature, layer) {
-
-  // Loop through the earthquake incdents to select approriate color for each based on the depth.
-
-  var eqcolor = "";
-
-  if (feature.geometry.coordinates[2] > 250) {
-    eqcolor = "#4A235A";
-  }
-  else if (feature.geometry.coordinates[2] > 150) {
-    eqcolor = "#6C3483";
-  }
-  else if (feature.geometry.coordinates[2] > 50) {
-    eqcolor = "#8E44AD";
-  }
-  else {
-    eqcolor = "#A569BD";
-  }
-
+function drawPlateLines(feature, layer) {
+  // Coordinates for each point to be used in the polyline
+  var plateLines = [features.geometry.coordinates[1], features.geometry.coordinates[0]];
+  console.log(plateLines)
   // Setting the marker radius for the city by passing population into the markerSize function
 
-  eqMarkers.push(
-    L.circle([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
-      stroke: false,
-      fillOpacity: 0.75,
-      color: "black",
-      fillColor: eqcolor,
-      radius: ((feature.properties.mag) * 50000),
-    }),
+  polyLineBoundary.push(
+    L.polyline(plateLines, {
+      stroke: true,
+      fillOpacity: 0.99,
+      color: "red",
+      fillColor: "blue",
+    }).addTo(myMap),
   );
 }
 
-// -------------------------------------------------------------------------------------------------------------------
-// FUNCTION FOR PLATE BOUNDARIES
-// -------------------------------------------------------------------------------------------------------------------
-
-// d3.json("static/data/PB2002_boundaries.json").then((plateData) => {
+// // -------------------------------------------------------------------------------------------------------------------
+// // FUNCTION FOR PLATE BOUNDARIES
+// // -------------------------------------------------------------------------------------------------------------------
+// // function makePolyLine(feature, layer) {
+// // d3.json("static/data/PB2002_boundaries.json").then((plateData) => {
 // d3.json("static/data/PB2002_boundaries.json", function (plateData) {
-// plateData.forEach(function (boundary) {
-function makePolyLine(feature, layer) {
-  // Coordinates for each point to be used in the polyline
-  var plateLines = [feature.features.geometry.coordinates[1], feature.features.geometry.coordinates[0]];
-  console.log(plateLines)
-  // Create a polyline using the line coordinates and pass in some initial options
-  L.polyline(plateLines, {
-    color: "red"
-  }).addTo(myMap);
+//   plateData.forEach(function (boundary) {
+//     // Coordinates for each point to be used in the polyline
+//     var plateLines = [boundary.features.geometry.coordinates[1], boundary.features.geometry.coordinates[0]];
 
-  // })
-}
+//     // Create a polyline using the line coordinates and pass in some initial options
+//     L.polyline(plateLines, {
+//       color: "red"
+//     }).addTo(myMap);
+
+//   })
 // })
 
 // -------------------------------------------------------------------------------------------------------------------
 // FUNCTION FOR CREATING THE MAP
 // -------------------------------------------------------------------------------------------------------------------
-function createMap(earthquakes) {
+function createMap(plateBoundary) {
   // Define variables for our base layers
   var streetmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
     maxZoom: 10,
@@ -125,8 +100,8 @@ function createMap(earthquakes) {
   });
 
   // Create two separate layer groups: one for earthquakes and one for ???
-  var earthquakes = L.layerGroup(eqMarkers);
-  var plateBoundary = L.layerGroup(plateLines);
+  // var earthquakes = L.layerGroup(eqMarkers);
+  var plateBoundary = L.layerGroup(polyLineBoundary);
 
   // Create a baseMaps object
   var baseMaps = {
@@ -136,7 +111,7 @@ function createMap(earthquakes) {
 
   // Create an overlay object
   var overlayMaps = {
-    "earthquake Overlay": earthquakes,
+    // "earthquake Overlay": earthquakes,
     "plateBoundary Overlay": plateBoundary,
   };
 
@@ -144,7 +119,7 @@ function createMap(earthquakes) {
   var myMap = L.map("map", {
     center: [35.00, 0.00],
     zoom: 3,
-    layers: [streetmap, earthquakes, plateBoundary]
+    layers: [streetmap, plateBoundary]
   });
 
   // Pass our map layers into our layer control

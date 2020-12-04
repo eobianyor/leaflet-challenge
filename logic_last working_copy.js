@@ -41,14 +41,6 @@ d3.json(link, function (data) {
     onEachFeature: makeCircles
   });
 
-  d3.json("static/data/PB2002_boundaries.json", function (plateData) {
-    // Once we get a response, create a geoJSON layer containing the features array and add a popup for each marker
-    // then, send the layer to the createMap() function.
-    // var plateLines = [features.geometry.coordinates[1], features.geometry.coordinates[0]];
-    // console.log(plateLines)
-    makePolyLine()
-  });
-
   makePolyLine()
   createMap(earthquakes);
 });
@@ -92,20 +84,20 @@ function makeCircles(feature, layer) {
 // -------------------------------------------------------------------------------------------------------------------
 
 // d3.json("static/data/PB2002_boundaries.json").then((plateData) => {
-// d3.json("static/data/PB2002_boundaries.json", function (plateData) {
-// plateData.forEach(function (boundary) {
-function makePolyLine(feature, layer) {
-  // Coordinates for each point to be used in the polyline
-  var plateLines = [feature.features.geometry.coordinates[1], feature.features.geometry.coordinates[0]];
-  console.log(plateLines)
-  // Create a polyline using the line coordinates and pass in some initial options
-  L.polyline(plateLines, {
-    color: "red"
-  }).addTo(myMap);
+d3.json("static/data/PB2002_boundaries.json", function (plateData) {
+  // plateData.forEach(function (boundary) {
+  function makePolyLine(feature, layer) {
+    // Coordinates for each point to be used in the polyline
+    var plateLines = [features.geometry.coordinates[1], features.geometry.coordinates[0]];
+    console.log(plateLines)
+    // Create a polyline using the line coordinates and pass in some initial options
+    L.polyline(plateLines, {
+      color: "red"
+    }).addTo(myMap);
 
-  // })
-}
-// })
+    // })
+  }
+})
 
 // -------------------------------------------------------------------------------------------------------------------
 // FUNCTION FOR CREATING THE MAP
