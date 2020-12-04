@@ -31,7 +31,7 @@ var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.
 // -------------------------------------------------------------------------------------------------------------------
 // Define arrays to hold created earthquake markers and plate boundary polyline
 var eqMarkers = [];
-var plateBoundary = [];
+var plateLines = [];
 
 // // Perform a GET request to the query URL
 d3.json(link, function (data) {
@@ -46,10 +46,10 @@ d3.json(link, function (data) {
     // then, send the layer to the createMap() function.
     // var plateLines = [features.geometry.coordinates[1], features.geometry.coordinates[0]];
     // console.log(plateLines)
-    makePolyLine()
+    var plateBoundaryLines = L.geoJSON(data.features, {
+      onEachFeature: makePolyLine
+    });
   });
-
-  makePolyLine()
   createMap(earthquakes);
 });
 // -------------------------------------------------------------------------------------------------------------------
@@ -96,16 +96,22 @@ function makeCircles(feature, layer) {
 // plateData.forEach(function (boundary) {
 function makePolyLine(feature, layer) {
   // Coordinates for each point to be used in the polyline
-  var plateLines = [feature.features.geometry.coordinates[1], feature.features.geometry.coordinates[0]];
-  console.log(plateLines)
+  var platePointList = [feature.geometry.coordinates[1], feature.geometry.coordinates[0]];
+  var polyline = [];
+  console.log(platePointList);
+  // console.log(plateLines);
   // Create a polyline using the line coordinates and pass in some initial options
-  L.polyline(plateLines, {
-    color: "red"
-  }).addTo(myMap);
+  plateLines.push(
+    polyline = new L.polyline(platePointList, {
+      color: 'red',
+      weight: 5000,
+      opacity: 0.5,
+      smoothFactor: 1
+    }),
+    // polyline.addTo(map),
+  );
 
-  // })
 }
-// })
 
 // -------------------------------------------------------------------------------------------------------------------
 // FUNCTION FOR CREATING THE MAP
@@ -153,13 +159,3 @@ function createMap(earthquakes) {
     collapsed: false
   }).addTo(myMap);
 }
-
-
-
-// -------------------------------------------------------------------------------------------------------------------
-
-// -------------------------------------------------------------------------------------------------------------------
-
-// -------------------------------------------------------------------------------------------------------------------
-
-// -------------------------------------------------------------------------------------------------------------------
