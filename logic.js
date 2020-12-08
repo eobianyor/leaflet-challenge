@@ -18,6 +18,7 @@ d3.json(link, function (data) {
     onEachFeature: makeCircles
   });
 
+  // Perform a GET request to the query the boundaries json
   d3.json("static/data/PB2002_boundaries.json", function (plateData) {
     var boundaryLines = plateData.features
     // Once we get a response, create a geoJSON layer containing the features array and add a popup for each marker
@@ -69,7 +70,7 @@ function makeCircles(feature, layer) {
       color: "black",
       fillColor: eqcolor,
       radius: ((feature.properties.mag) * 50000),
-    }),
+    }).bindPopup(`<h3>Location:${feature.properties.place}</h3> <hr> <h3>Magnitude:${feature.properties.mag}</h3> <h3>Depth: ${feature.geometry.coordinates[2]}</h3>`),
   );
 }
 
@@ -129,6 +130,27 @@ function createMap(earthquakes, plates) {
     layers: [streetmap, earthquakes, plateBoundary]
   });
 
+  // Create and add a legend to map
+  var legend = L.control({ position: 'bottomleft' });
+  legend.onAdd = function (myMap) {
+
+    var div = L.DomUtil.create('div', 'info legend');
+    labels = ['<strong>Depths</strong>'],
+      depths = ['> 250ft', '> 150ft', '> 100ft', '> 50ft', '< 50ft'];
+
+    for (var i = 0; i < depths.length; i++) {
+
+      div.innerHTML +=
+        labels.push(
+          '<i class="square" style="background:' + getColor(depths[i]) + '"></i> ' +
+          (depths[i] ? depths[i] : '+'));
+
+    }
+    div.innerHTML = labels.join('<br>');
+    return div;
+  };
+  legend.addTo(myMap);
+
   // Pass our map layers into our layer control
   // Add the layer control to the map
   L.control.layers(baseMaps, overlayMaps, {
@@ -157,6 +179,7 @@ function createMap(earthquakes, plates) {
 //     onEachFeature: makeCircles
 //   });
 
+// // Perform a GET request to the query the boundaries json
 //   d3.json("static/data/PB2002_boundaries.json", function (plateData) {
 //     var boundaryLines = plateData.features
 //     // Once we get a response, create a geoJSON layer containing the features array and add a popup for each marker
@@ -202,7 +225,7 @@ function createMap(earthquakes, plates) {
 //       color: "black",
 //       fillColor: eqcolor,
 //       radius: ((feature.properties.mag) * 50000),
-//     }),
+//     })(`<h3>Location:${feature.properties.place}</h3> <hr> <h3>Magnitude:${feature.properties.mag}</h3> <br> <h3>Depth: ${feature.geometry.coordinates[2]}</h3>`),
 //   );
 // }
 
