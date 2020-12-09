@@ -131,14 +131,17 @@ function createMap(earthquakes, plates) {
   });
 
   // Create and add a legend to map
+  // Create an object legend
   var legend = L.control({ position: 'bottomleft' });
   legend.onAdd = function (myMap) {
 
+    // details for the legend
     var div = L.DomUtil.create('div', 'info legend');
     labels = ['<strong>Depths</strong>'];
     var depths = ['> 250ft', '> 150ft', '> 100ft', '> 50ft', '< 50ft'];
     var Lcolors = ["#661400", "#A31A0E", "#DF554D", "#DF554D", "#19F52A"]
 
+    // Looping through
     for (var i = 0; i < depths.length; i++) {
 
       div.innerHTML +=
@@ -150,6 +153,7 @@ function createMap(earthquakes, plates) {
     div.innerHTML = labels.join('<br>');
     return div;
   };
+  // Finally, we add our legend to the map.
   legend.addTo(myMap);
 
   // Pass our map layers into our layer control
@@ -300,6 +304,32 @@ function createMap(earthquakes, plates) {
 //     zoom: 3,
 //     layers: [darkmap, earthquakes, plateBoundary]
 //   });
+
+// // Create and add a legend to map
+//   // Create an object legend
+//   var legend = L.control({ position: 'bottomleft' });
+//   legend.onAdd = function (myMap) {
+
+//     // details for the legend
+//     var div = L.DomUtil.create('div', 'info legend');
+//     labels = ['<strong>Depths</strong>'];
+//     var depths = ['> 250ft', '> 150ft', '> 100ft', '> 50ft', '< 50ft'];
+//     var Lcolors = ["#661400", "#A31A0E", "#DF554D", "#DF554D", "#19F52A"]
+
+//     // Looping through
+//     for (var i = 0; i < depths.length; i++) {
+
+//       div.innerHTML +=
+//         labels.push(
+//           '<i class="square" style="background:' + (Lcolors[i]) + '"></i> ' +
+//           depths[i] + (depths[i + 1] ? "  -  " + depths[i + 1] + "<br>" : '+'));
+
+//     }
+//     div.innerHTML = labels.join('<br>');
+//     return div;
+//   };
+//   // Finally, we add our legend to the map.
+//   legend.addTo(myMap);
 
 //   // Pass our map layers into our layer control
 //   // Add the layer control to the map
