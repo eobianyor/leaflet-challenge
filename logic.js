@@ -137,14 +137,14 @@ function createMap(earthquakes, plates) {
     var div = L.DomUtil.create('div', 'info legend');
     labels = ['<strong>Depths</strong>'];
     var depths = ['> 250ft', '> 150ft', '> 100ft', '> 50ft', '< 50ft'];
-    var Lcolors = ["#19F52A", "#DF554D", "#DF554D", "#A31A0E", "#661400"]
+    var Lcolors = ["#661400", "#A31A0E", "#DF554D", "#DF554D", "#19F52A"]
 
     for (var i = 0; i < depths.length; i++) {
 
       div.innerHTML +=
         labels.push(
           '<i class="square" style="background:' + (Lcolors[i]) + '"></i> ' +
-          depths[i] + (depths[i + 1] ? "ndash;" + depths[i + 1] + "<br>" : '+'));
+          depths[i] + (depths[i + 1] ? "  -  " + depths[i + 1] + "<br>" : '+'));
 
     }
     div.innerHTML = labels.join('<br>');
